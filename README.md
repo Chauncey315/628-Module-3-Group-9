@@ -3,7 +3,5 @@ Because the dataset is of size about 7GB, we will use [Google colab](https://col
 
 
 
-One can get the dataset via the following link:
-
-https://drive.google.com/drive/folders/11vqfdfv8skQDKFc8RmT4S1HjFsQw1V7I?usp=sharing
+One can get the dataset via the this [link](https://drive.google.com/drive/folders/11vqfdfv8skQDKFc8RmT4S1HjFsQw1V7I?usp=sharing). 
 
