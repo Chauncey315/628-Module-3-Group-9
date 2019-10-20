@@ -16,6 +16,7 @@
 * Location: plot restaurant on map, clustering to find business hub
 * Food Type: extract information from the `category` column in `business.csv`
 * Peak hour detection: use `data` column in `tip.csv` to find peak hour of a given restaurant or a given city.
+* Waiter Improvement: analysis `text` column in `tip.csv` to find improvement advice to waiters
 * Customer returning rate and feature of those customer
 * Advertisement Advise
   * Goal: Use minimum amount of advertisement to get maximum effect in a given city
