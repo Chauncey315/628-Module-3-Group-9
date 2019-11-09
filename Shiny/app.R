@@ -1,12 +1,13 @@
 # This is the Shiny app for STAT 628, Module 3, Group 9
+rm(list = ls())
 
 library(shiny)
 library(leaflet)
 
-torAsian = read.csv("data/tor_asianrestaurant.csv")
-location = torAsian[, c("longitude", "latitude")]
+source("dataCleaning.R")
 
 ui <- fluidPage(
+    theme = "darkly",
     fluidRow(
         column(3, "Project Name"),
         column(2,
@@ -47,7 +48,7 @@ server <- function(input, output, session){
         addTiles() %>% 
         setView(-79.40229, 43.73350, 14) %>% 
         addCircles(data = location, weight = 3, radius=20, 
-                 color="black", stroke = TRUE, fillOpacity = 0.8) %>% 
+                 color=location$color, stroke = TRUE, fillOpacity = 0.8) %>% 
         addMarkers(data = location, clusterOptions = markerClusterOptions(),
                    clusterId = "cluster1")
     })
