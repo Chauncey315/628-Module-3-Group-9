@@ -7,52 +7,43 @@ library(leaflet)
 source("dataCleaning.R")
 
 ui <- fluidPage(
-    theme = "darkly",
-    fluidRow(
-        column(3, "Project Name"),
-        column(2,
-               selectInput(inputId = "city", label = "City", 
-                           choices = c("Toronto"))),
-    ),
+    theme = "flatly.css",
+    titlePanel("Yelp Business Analysis"),
     
     tags$hr(),
     
-    fluidRow(
-        column(7, 
-               textInput(inputId = "search", value = "Enter Text ...",
-                         label = "Search")),
-        column(1,
-               selectInput(inputId = "slt1", label = "Input1", 
-                           choices = c(1,2,3))),
-        column(1,
-               selectInput(inputId = "slt2", label = "Input2", 
-                           choices = c(1,2,3))),
-        column(1,
-               selectInput(inputId = "slt3", label = "Input3", 
-                           choices = c(1,2,3))),
-        column(1,
-               selectInput(inputId = "slt4", label = "Input4", 
-                           choices = c(1,2,3))),
-        column(1,
-               actionButton(inputId = "mrFlt", label = "More Filters"))
-    ),
-    verbatimTextOutput("zoom"),
+    inputPanel(textInput(inputId = "search", placeholder = "Search for something",
+                         label = "Search"),
+               # selectInput(inputId = "city", label = "City", choices = c("Toronto")),
+               checkboxGroupInput(inputId = "cuisine", label = "Cuisine",
+                                  choices = cuisineSet, selected = cuisineSet ),
+               sliderInput(inputId = "starRange", label = "Star", round = starPrecision,
+                           min = 0., max = 5., value = c(0, 5), step = 0.1**starPrecision)
+               ),
+    
+    tags$hr(),
+    
+    verbatimTextOutput("slider"),
+    verbatimTextOutput("cuisine"),
     leafletOutput("map", height = 800, width = 1200),
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session){
+    # locFiltered = reactive(filterLocation(cuisine, star))
     
     output$map = renderLeaflet({
         leaflet() %>% 
         addTiles() %>% 
         setView(-79.40229, 43.73350, 14) %>% 
-        addCircles(data = location, weight = 3, radius=20, 
+        addCircles(location$longitude, location$latitude, weight = 3, radius=20, 
                  color=location$color, stroke = TRUE, fillOpacity = 0.8) %>% 
-        addMarkers(data = location, clusterOptions = markerClusterOptions(),
+        addMarkers(location$longitude, location$latitude, clusterOptions = markerClusterOptions(),
                    clusterId = "cluster1")
     })
     
+    output$slider = renderText(str(input$starRange))
+    output$cuisine = renderText(str(input$cuisine))
     
 }
 
