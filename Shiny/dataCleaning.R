@@ -19,7 +19,7 @@ for(i in seq(1, nrow(torAsian))){
 
 location$color = colorByColor
 
-cuisineSet = c("Chinese", "Korean", "Japanese", "Thai", "Vietnam")
+cuisineSet = c("Chinese", "Korean", "Japanese", "Vietnamese", "Thai")
 
 starRange = c()
 
@@ -37,11 +37,31 @@ starPrecision = 2
 
 cuisine = c()
 for(i in seq(1, nrow(torAsian))){
+  ctgTemp = torAsian[i, c("name", "categories")]
+  ctgTemp = gsub(" ", "", ctgTemp, fixed = TRUE)
+  ctgTemp = unlist(strsplit(ctgTemp, ","))
   
+  slctTemp = !is.na(match(tolower(cuisineSet), ctgTemp))
+  
+  if(sum(slctTemp) == 0){
+    cuisine[i] = "UndefinedCategory"
+  }else if(sum(slctTemp) == 1){
+    cuisine[i] = cuisineSet[ match(TRUE, slctTemp) ]
+  }else if(sum(slctTemp) >= 2 & sum(slctTemp) <=5){
+    cuisine[i] = 'MultipleCategory'
+  }else{
+    cuisine[i] = 'UnkownError'
+  }
 }
-torAsian[1, c("name", "categories")]
-match( torAsian[1, "categories"], cuisineSet )
+torAsian$cuisine = cuisine
 
-str(torAsian$categories[1])
+filterLocation = function(cuisineCurrentSet, starCurrentRange){
+  cuisineSelector = match(torAsian$cuisine, cuisineCurrentSet)
+  cuisineSelector = !is.na(cuisineSelector)
+  
+  starSelector = (torAsian$stars >= starCurrentRange[1]) & (torAsian$stars <= starCurrentRange[2])
+  
+  return(location[cuisineSelector & starSelector,])
+}
 
-length(torAsian$categories[1])
+# match(torAsian$cuisine, cuisineSet)

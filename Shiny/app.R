@@ -30,15 +30,15 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session){
-    # locFiltered = reactive(filterLocation(cuisine, star))
+    locFiltered = reactive(filterLocation( input$cuisine, input$starRange))
     
     output$map = renderLeaflet({
         leaflet() %>% 
         addTiles() %>% 
         setView(-79.40229, 43.73350, 14) %>% 
-        addCircles(location$longitude, location$latitude, weight = 3, radius=20, 
-                 color=location$color, stroke = TRUE, fillOpacity = 0.8) %>% 
-        addMarkers(location$longitude, location$latitude, clusterOptions = markerClusterOptions(),
+        addCircles(locFiltered()$longitude, locFiltered()$latitude, weight = 3, radius=20, 
+                 color=locFiltered()$color, stroke = TRUE, fillOpacity = 0.8) %>% 
+        addMarkers(locFiltered()$longitude, locFiltered()$latitude, clusterOptions = markerClusterOptions(),
                    clusterId = "cluster1")
     })
     
