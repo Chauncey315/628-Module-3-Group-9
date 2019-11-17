@@ -28,7 +28,7 @@ ui <- navbarPage(
                                
                                h2("Restaurant Explorer"),
                                
-                               textInput(inputId = "search", placeholder = "Search for something",
+                               textInput(inputId = "search", placeholder = "Search Restaurant by Name",
                                          label = "Search"),
                                
                                sliderInput(inputId = "starRange", label = "Star", round = starPrecision,
@@ -49,7 +49,8 @@ ui <- navbarPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session){
-    locFiltered = reactive(filterLocation( input$cuisineSet, input$starRange, input$districtSet))
+    locFiltered = reactive(filterLocation( input$cuisineSet, input$starRange, input$districtSet,
+                                           input$search))
     
     
     

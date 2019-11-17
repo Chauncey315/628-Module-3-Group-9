@@ -4,12 +4,12 @@ rm(list = ls())
 torAsian = read.csv("data/asian_restaurant.csv")
 torAsian$categories = tolower(torAsian[, "categories"])
 # location = torAsian[, c("longitude", "latitude")]
-location = torAsian[, c("longitude", "latitude", "stars")]
+location = torAsian[, c("longitude", "latitude", "stars", "name")]
 
 
 
 
-centerTorAsian = apply(location, 2, mean)
+centerTorAsian = apply(location[c("longitude", "latitude")], 2, mean)
 pal = colorNumeric(palette = c("black", "red", "blue"), domain = location$stars)
 
 
@@ -24,7 +24,7 @@ starPrecision = 2
 
 torAsian$cuisine = torAsian$new_category
 
-filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSet){
+filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSet, searchKeywords){
   cuisineSelector = match(torAsian$cuisine, cuisineCurrentSet)
   cuisineSelector = !is.na(cuisineSelector)
   
@@ -33,7 +33,9 @@ filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSe
   
   starSelector = (torAsian$stars >= starCurrentRange[1]) & (torAsian$stars <= starCurrentRange[2])
   
-  aggregateSelector = cuisineSelector & starSelector & districtSelector
+  searchSelector = grepl(searchKeywords, location$name, ignore.case = TRUE)
+  
+  aggregateSelector = cuisineSelector & starSelector & districtSelector & searchSelector
   return(location[aggregateSelector,])
 }
 
