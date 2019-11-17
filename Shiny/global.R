@@ -4,7 +4,7 @@ rm(list = ls())
 torAsian = read.csv("data/asian_restaurant.csv")
 torAsian$categories = tolower(torAsian[, "categories"])
 # location = torAsian[, c("longitude", "latitude")]
-location = torAsian[, c("longitude", "latitude", "stars", "name")]
+location = torAsian[, c("longitude", "latitude", "stars", "name", "business_id")]
 
 
 
@@ -33,7 +33,9 @@ filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSe
   
   starSelector = (torAsian$stars >= starCurrentRange[1]) & (torAsian$stars <= starCurrentRange[2])
   
-  searchSelector = grepl(searchKeywords, location$name, ignore.case = TRUE)
+  searchSelectorName = grepl(searchKeywords, location$name, ignore.case = TRUE)
+  searchSelectorBusinessId = grepl(searchKeywords, location$business_id, ignore.case = FALSE)
+  searchSelector = searchSelectorName | searchSelectorBusinessId
   
   aggregateSelector = cuisineSelector & starSelector & districtSelector & searchSelector
   return(location[aggregateSelector,])

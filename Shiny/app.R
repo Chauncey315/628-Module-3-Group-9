@@ -28,7 +28,7 @@ ui <- navbarPage(
                                
                                h2("Restaurant Explorer"),
                                
-                               textInput(inputId = "search", placeholder = "Search Restaurant by Name",
+                               textInput(inputId = "search", placeholder = "Search Restaurants by Name or Business ID",
                                          label = "Search"),
                                
                                sliderInput(inputId = "starRange", label = "Star", round = starPrecision,
@@ -59,7 +59,8 @@ server <- function(input, output, session){
             addTiles() %>% 
             setView(-79.40229, 43.73350, 10) %>% 
             addCircles(locFiltered()$longitude, locFiltered()$latitude, weight = 3, radius=20, 
-                       color=pal(locFiltered()$stars), stroke = TRUE, fillOpacity = 0.8) %>% 
+                       color=pal(locFiltered()$stars), stroke = TRUE, fillOpacity = 0.8,
+                       label = locFiltered()$name) %>% 
             addMarkers(locFiltered()$longitude, locFiltered()$latitude, clusterOptions = markerClusterOptions(),
                        clusterId = "cluster1") %>%
             addLegend("topright", pal = pal, values = location$stars, bins = 7,
