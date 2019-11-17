@@ -4,7 +4,7 @@ rm(list = ls())
 torAsian = read.csv("data/asian_restaurant.csv")
 torAsian$categories = tolower(torAsian[, "categories"])
 # location = torAsian[, c("longitude", "latitude")]
-location = torAsian[, c("longitude", "latitude", "stars", "name", "business_id")]
+location = torAsian[, c("longitude", "latitude", "stars", "name", "business_id", "review_count")]
 
 
 
@@ -43,8 +43,14 @@ filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSe
 
 match(torAsian$cuisine, cuisineSet)
 
-location$mapLabel = paste(location$name, ", Star: ", location$stars, sep = "")
-
+mapLabel = lapply(seq(nrow(location)), function(i){
+  paste0(location$name[i], "<br/>",
+         "Star: ", location$stars[i], "<br/>",
+         "Review Amout: ", location$review_count[i],
+         sep = "")
+})
+mapLabel = lapply(mapLabel, htmltools::HTML)
+location$mapLabel = mapLabel
 
 
 
