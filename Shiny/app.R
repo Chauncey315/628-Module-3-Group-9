@@ -60,7 +60,7 @@ server <- function(input, output, session){
             setView(-79.40229, 43.73350, 10) %>% 
             addCircles(locFiltered()$longitude, locFiltered()$latitude, weight = 3, radius=20, 
                        color=pal(locFiltered()$stars), stroke = TRUE, fillOpacity = 0.8,
-                       label = locFiltered()$name) %>% 
+                       label = locFiltered()$mapLabel) %>% 
             addMarkers(locFiltered()$longitude, locFiltered()$latitude, clusterOptions = markerClusterOptions(),
                        clusterId = "cluster1") %>%
             addLegend("topright", pal = pal, values = location$stars, bins = 7,

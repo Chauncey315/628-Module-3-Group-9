@@ -43,6 +43,7 @@ filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSe
 
 match(torAsian$cuisine, cuisineSet)
 
+location$mapLabel = paste(location$name, ", Star: ", location$stars, sep = "")
 
 
 
