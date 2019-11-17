@@ -9,6 +9,8 @@ source("global.R")
 ui <- navbarPage(
     "Yelp Business Analysis", id = "nav",
     # theme = "superZip.css",
+    # tags$style("#text1{font-family: Arial, Helvetica, sans-serif;}")
+    
     
     tabPanel("Interactive Map",
              div(class="outer",
@@ -33,7 +35,10 @@ ui <- navbarPage(
                                            min = 0., max = 5., value = c(0., 5.), step = 0.1**starPrecision),
                                
                                checkboxGroupInput(inputId = "cuisineSet", label = "Cuisine",
-                                                  choices = cuisineSet, selected = cuisineSet)
+                                                  choices = cuisineSet, selected = cuisineSet),
+                               
+                               checkboxGroupInput(inputId = "districtSet", label = "District",
+                                                  choices = districtSet, selected = districtSet)
                  ),
              ),
     ),
@@ -44,7 +49,7 @@ ui <- navbarPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session){
-    locFiltered = reactive(filterLocation( input$cuisineSet, input$starRange))
+    locFiltered = reactive(filterLocation( input$cuisineSet, input$starRange, input$districtSet))
     
     
     
@@ -53,9 +58,11 @@ server <- function(input, output, session){
             addTiles() %>% 
             setView(-79.40229, 43.73350, 10) %>% 
             addCircles(locFiltered()$longitude, locFiltered()$latitude, weight = 3, radius=20, 
-                       color=locFiltered()$color, stroke = TRUE, fillOpacity = 0.8) %>% 
+                       color=pal(locFiltered()$stars), stroke = TRUE, fillOpacity = 0.8) %>% 
             addMarkers(locFiltered()$longitude, locFiltered()$latitude, clusterOptions = markerClusterOptions(),
-                       clusterId = "cluster1")
+                       clusterId = "cluster1") %>%
+            addLegend("topright", pal = pal, values = location$stars, bins = 7,
+                      title = "Star")
     })
     
     output$starRangeslider = renderText(str(input$starRange))
