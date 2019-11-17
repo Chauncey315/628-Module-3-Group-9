@@ -2,20 +2,25 @@ rm(list = ls())
 
 # set working directory to source file location
 torAsian = read.csv("data/asian_restaurant.csv")
+attribute = read.csv("data/topuser100_attribute.csv")
+
+
+
 torAsian$categories = tolower(torAsian[, "categories"])
 # location = torAsian[, c("longitude", "latitude")]
 location = torAsian[, c("longitude", "latitude", "stars", "name", "business_id", "review_count")]
-
-
-
-
 centerTorAsian = apply(location[c("longitude", "latitude")], 2, mean)
+centerTorAsian = as.vector(centerTorAsian)
+
 pal = colorNumeric(palette = c("black", "red", "blue"), domain = location$stars)
 
 
 
 
 cuisineSet = c("Chinese", "Korean", "Japanese", "Vietnamese", "Thai")
+attributeSet = c("Romantic", "Good for Group")
+# str(attribute$attributes_Ambience[1])
+
 
 districtSet = unique(torAsian$city)
 
@@ -52,7 +57,35 @@ mapLabel = lapply(seq(nrow(location)), function(i){
 mapLabel = lapply(mapLabel, htmltools::HTML)
 location$mapLabel = mapLabel
 
-
+dropdownButton = function(label = "", status = c("default", "primary", "success", "info", "warning", "danger"), ..., width = NULL) {
+  
+  status = match.arg(status)
+  # dropdown button content
+  html_ul = list(
+    class = "dropdown-menu",
+    style = if (!is.null(width)) 
+      paste0("width: ", validateCssUnit(width), ";"),
+    lapply(X = list(...), FUN = tags$li, style = "margin-left: 10px; margin-right: 10px;")
+  )
+  # dropdown button apparence
+  html_button = list(
+    class = paste0("btn btn-", status," dropdown-toggle"),
+    type = "button", 
+    `data-toggle` = "dropdown"
+  )
+  html_button = c(html_button, list(label))
+  html_button = c(html_button, list(tags$span(class = "caret")))
+  # final result
+  tags$div(
+    class = "dropdown",
+    do.call(tags$button, html_button),
+    do.call(tags$ul, html_ul),
+    tags$script(
+      "$('.dropdown-menu').click(function(e) {
+      e.stopPropagation();
+});")
+  )
+}
 
 # left closed, right open, [,)
 # colorSet = c("black", "purple", "blue", "orange", "red")
