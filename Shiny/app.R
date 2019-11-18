@@ -79,26 +79,49 @@ server <- function(input, output, session){
         }
     })
     
-    
-    
     output$map = renderLeaflet({
         leaflet() %>% 
-            addTiles() %>% 
+            addTiles() %>%
             setView(centerTorAsian[1], centerTorAsian[2],  zoom = 10) %>% 
-            addCircles(locFiltered()$longitude, locFiltered()$latitude, weight = 3, radius=20, 
-                       color=pal(locFiltered()$stars), stroke = TRUE, fillOpacity = 0.8
-                       ,label = circleLabel()
-                       ) %>% 
-            addMarkers(locFiltered()$longitude, locFiltered()$latitude, clusterOptions = markerClusterOptions(),
+            addCircles(location$longitude, location$latitude, weight = 3, radius=20, 
+                       color=pal(location$stars), stroke = TRUE, fillOpacity = 0.8
+                       ,label = circleLabel()) %>% 
+            addMarkers(location$longitude, location$latitude, clusterOptions = markerClusterOptions(),
                        clusterId = "cluster1") %>%
             addLegend("topright", pal = pal, values = location$stars, bins = 7,
                       title = "Star")
     })
     
-    # output$starRangeslider = renderText(str(input$starRange))
-    # output$cuisineSetCheckbox = renderText(str(input$cuisineSet))
+    observe({
+        leafletProxy("map") %>%
+            clearShapes() %>%
+            clearMarkers() %>%
+            clearMarkerClusters() %>%
+            setView(unlist(input$map_center)[1], unlist(input$map_center)[2],  zoom = input$map_zoom) %>%
+            addCircles(locFiltered()$longitude, locFiltered()$latitude, weight = 3, radius=20,
+                       color=pal(locFiltered()$stars), stroke = TRUE, fillOpacity = 0.8
+                       ,label = circleLabel()) %>%
+            addMarkers(locFiltered()$longitude, locFiltered()$latitude, clusterOptions = markerClusterOptions(),
+                       clusterId = "cluster1")
+    })
     
-    output$debug = renderText(length(locFiltered()$mapLabel))
+    # output$map = renderLeaflet({
+    #     leaflet() %>% 
+    #         addTiles() %>% 
+    #         setView(centerTorAsian[1], centerTorAsian[2],  zoom = 10) %>% 
+    #         addCircles(locFiltered()$longitude, locFiltered()$latitude, weight = 3, radius=20, 
+    #                    color=pal(locFiltered()$stars), stroke = TRUE, fillOpacity = 0.8
+    #                    ,label = circleLabel()
+    #         ) %>% 
+    #         addMarkers(locFiltered()$longitude, locFiltered()$latitude, clusterOptions = markerClusterOptions(),
+    #                    clusterId = "cluster1") %>%
+    #         addLegend("topright", pal = pal, values = location$stars, bins = 7,
+    #                   title = "Star")
+    #     
+    # })
+    
+    
+    output$debug = renderText(unlist(input$map_center))
     
 }
 

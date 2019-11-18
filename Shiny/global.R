@@ -19,6 +19,8 @@ pal = colorNumeric(palette = c("black", "red", "blue"), domain = location$stars)
 
 cuisineSet = c("Chinese", "Korean", "Japanese", "Vietnamese", "Thai")
 attributeSet = c("Romantic", "Good for Group")
+zoomCurrent = 10
+centerCurrent = centerTorAsian
 # str(attribute$attributes_Ambience[1])
 
 
