@@ -1,9 +1,6 @@
-# Yelp Dataset
+# Function of Files in Repo
 
-## Introduction
-Because the dataset is of size about 7GB, we will use [Google colab](https://colab.research.google.com/notebooks/welcome.ipynb) to load and analyze the dataset. To save the time of uploading dataset onto Goolge colab evrytime we start a new remote host, we upload the `csv` version of dataset onto Google Drive, and mount Google Drive to the remote host. 
 
-One can get the dataset via the this [link](https://drive.google.com/drive/folders/11vqfdfv8skQDKFc8RmT4S1HjFsQw1V7I?usp=sharing). 
 
 ## Step
 ### Clean Data
@@ -39,18 +36,10 @@ One can get the dataset via the this [link](https://drive.google.com/drive/folde
     (b) W2V
         (1) t-sne
 
-2. model selection
-    (a)LDA
-    *(b)Xgboost
-    *(c)LSTM
-
 3. visualize
     (a)wordcloud
 
-
-****
-
-## 10.20 Meeting
+### Business suggestion
 
 **Goal**: Give advice to business owners who want to open a new restaurant in a particular city (analyze Great Toronto Area as example)
 
@@ -59,7 +48,6 @@ One can get the dataset via the this [link](https://drive.google.com/drive/folde
 **Shiny App**
 
 * Analyze Great Toronto Area & visualize, interpret the result
-* Provide function to analyze any given city & visualize the result
 
 **Perspectives**
 
@@ -77,21 +65,3 @@ One can get the dataset via the this [link](https://drive.google.com/drive/folde
     * Find [central point](https://programminghistorian.org/en/lessons/exploring-and-analyzing-network-data-with-python#basics-of-networkx-creating-the-graph) of the network, regard them as advertisement recipients
     * [Clustering graph](https://www.csc2.ncsu.edu/faculty/nfsamato/practical-graph-mining-with-R/slides/pdf/Graph_Cluster_Analysis.pdf), sample important points from each cluster
     * Construct matrix of users, calculate `Graph Clustering Rate` `Transtivity` 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Reference
-
-1. [Latent Dirichlet Allocation](https://github.com/kapadias/mediumposts.git)
-2. 
