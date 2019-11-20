@@ -50,8 +50,8 @@ ui <- navbarPage(
                                                   choices = cuisineSet, selected = NULL),
                                
                                
-                               tags$hr(),
-                               textOutput(outputId = "debug")
+                               # tags$hr(),
+                               # textOutput(outputId = "debug")
                                
                  ),
                  
@@ -230,14 +230,7 @@ server <- function(input, output, session){
     
     )
     
-    # output$markdown = renderUI({
-    #     input$koreanAnalysis
-    #     HTML(markdown::markdownToHTML(text = includeMarkdown("www/merra1.md")))
-    #     # includeMarkdown("www/merra1.md")
-    # })
-    
-    output$debug = renderText(length(restaurantLabel()))
-    
+    # output$debug = renderText(length(restaurantLabel()))
     output$influentialUser = renderText(as.character(userFiltered()$user_name), sep = "\n")
     
     

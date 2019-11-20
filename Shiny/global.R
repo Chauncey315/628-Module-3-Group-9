@@ -167,6 +167,15 @@ for(i in seq(1, length(restaurantUnique))){
 # str(restaurantAttribute)
 
 restaurantLabel = lapply(seq(nrow(restaurantAttribute)), function(i){
+  userIDByRestaurant = as.vector(findUserByRestaurant(restaurantAttribute$business_id[i])$userid)
+  userNameByRestaurant = !is.na( match(as.vector(userCuisineLabel$user_id), userIDByRestaurant) )
+  userNameByRestaurant = as.vector( userCuisineLabel$user_name[userNameByRestaurant] )
+  
+  userHTML = c()
+  for( i in seq(1, length(userNameByRestaurant)) ){
+    userHTML = paste0(userHTML, "<br/>", userNameByRestaurant[i], sep = "")
+  }
+  
   paste0(restaurantAttribute$name[i], "<br/>",
          "Star: ", restaurantAttribute$stars_float[i], "<br/>",
          "Alcohal: ", getAttributeMeaning(restaurantAttribute$Alcohol[i]), "<br/>",
@@ -175,7 +184,9 @@ restaurantLabel = lapply(seq(nrow(restaurantAttribute)), function(i){
          "Outdoor Seating: ", getAttributeMeaning(restaurantAttribute$OutdoorSeating[i]), "<br/>",
          "Delivery: ", getAttributeMeaning(restaurantAttribute$RestaurantsDelivery[i]), "<br/>",
          "Price Range: ", getPriceRangeMeaning(restaurantAttribute$attributes_RestaurantsPriceRange2[i]), "<br/>",
-         "Take Out: ", getAttributeMeaning(restaurantAttribute$RestaurantsTakeOut[i]),
+         "Take Out: ", getAttributeMeaning(restaurantAttribute$RestaurantsTakeOut[i]), "<br/>",
+         "Influential Users: ", 
+         userHTML,
          sep = ""
   )
 })
