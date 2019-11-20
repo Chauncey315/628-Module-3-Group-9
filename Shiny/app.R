@@ -3,6 +3,8 @@ rm(list = ls())
 
 library(shiny)
 library(leaflet)
+library(knitr)
+library(markdown)
 
 source("global.R")
 
@@ -78,43 +80,53 @@ ui <- navbarPage(
                      tags$link(rel = "stylesheet", type = "text/css", href = "grid.css")
                  ),
                  
-                 div(class = "gallery",
-                     div(class = "thumbnail",
-                         img(src='pic/korean.jpg', class = "cards",
-                             width="4000", alt=""),
-                         h3("Korean Restaurant"))
+                 absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+                               draggable = TRUE, top = 130, left = "auto", bottom = "auto",
+                               width = 600, height = "auto",style = "overflow-y:scroll; max-height: 600px",
+                               right = 120,
+                               uiOutput("cuisineAnalysis"),
+                               # imageOutput(outputId = "restStarDist")
                  ),
                  
                  div(class = "gallery",
                      div(class = "thumbnail",
+                         img(src='pic/korean.jpg', class = "cards",
+                             width="4000", alt=""),
+                         actionLink( label = h3("Korean Restaurant"), inputId = "koreanAnalysis" )
+                         # div("Know More", class = "button", inputId = "ka")
+                         ),
+                     div(class = "thumbnail",
                          img(src='pic/chinese.jpg', class = "cards",
                              width="4000", alt=""),
-                         h3("Chinese Restaurant"))
+                         actionLink( label = h3("Chinese Restaurant"), inputId = "chineseAnalysis" )
+                     )
+                     
                  ),
 
                  div(class = "gallery",
                      div(class = "thumbnail",
                          img(src='pic/thai.jpg', class = "cards",
-                                                  width="4000", alt=""),
-                         h3("Thai Restaurant"))
+                             width="4000", alt=""),
+                         actionLink( label = h3("Thai Restaurant"), inputId = "thaiAnalysis" )
                      ),
-                 
-                 div(class = "gallery",
                      div(class = "thumbnail",
                          img(src='pic/japanese.jpg', class = "cards",
                              width="4000", alt=""),
-                         h3("Japanese Restaurant"))
+                         actionLink( label = h3("Japanese Restaurant"), inputId = "japaneseAnalysis" )
+                     )
                  ),
                  
                  div(class = "gallery",
                      div(class = "thumbnail",
                          img(src='pic/vietnamese.jpg', class = "cards",
                              width="4000", alt=""),
-                         h3("Vietnamese Restaurant"))
+                         actionLink( label = h3("Vietnamese Restaurant"), inputId = "vietnameseAnalysis" )
+                         )
                  )
              )
     )
 )
+
 
 
 # Define server logic required to draw a histogram
@@ -180,6 +192,49 @@ server <- function(input, output, session){
             addMarkers(locFiltered()$longitude, locFiltered()$latitude, clusterOptions = markerClusterOptions(),
                        clusterId = "cluster1")
     })
+    
+    
+    cuiAnlyList = reactiveValues(cuisineAnalysis = HTML(includeHTML("analysis/empty.html")))
+    
+    observeEvent(input$koreanAnalysis, {
+        cuiAnlyList$cuisineAnalysis = HTML(includeHTML("analysis/korean.html"))
+    })
+    
+    observeEvent(input$chineseAnalysis, {
+        cuiAnlyList$cuisineAnalysis = HTML(includeHTML("analysis/chinese.html"))
+    })
+    
+    observeEvent(input$thaiAnalysis, {
+        cuiAnlyList$cuisineAnalysis = HTML(includeHTML("analysis/thai.html"))
+    })
+    
+    observeEvent(input$japaneseAnalysis, {
+        cuiAnlyList$cuisineAnalysis = HTML(includeHTML("analysis/japanese.html"))
+    })
+    
+    observeEvent(input$vietnameseAnalysis, {
+        cuiAnlyList$cuisineAnalysis = HTML(includeHTML("analysis/vietnamese.html"))
+    })
+    
+    output$cuisineAnalysis <- renderUI({
+        # if(is.null(cuiAnlyList$cuisineAnalysis)) return(HTML(""))
+        output$restStarDist = renderImage({
+            return(list(
+                src = "cn_restaurant_star.png",
+                contentType = "image/png",
+                alt = "Chinese Restaurant Star Distribution"
+            ))
+        }, deleteFile = FALSE)
+        cuiAnlyList$cuisineAnalysis
+    }
+    
+    )
+    
+    # output$markdown = renderUI({
+    #     input$koreanAnalysis
+    #     HTML(markdown::markdownToHTML(text = includeMarkdown("www/merra1.md")))
+    #     # includeMarkdown("www/merra1.md")
+    # })
     
     output$debug = renderText(length(restaurantLabel()))
     
