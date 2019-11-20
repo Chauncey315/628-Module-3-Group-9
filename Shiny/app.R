@@ -57,7 +57,7 @@ ui <- navbarPage(
                  
                  absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                draggable = TRUE, top = 310, left = "auto", bottom = "auto",
-                               width = 220, height = "auto",style = "overflow-y:scroll; max-height: 700px",
+                               width = 220, height = "auto",style = "overflow-y:scroll; max-height: 550px",
                                right = 20,
                                
                                h3("Influential Users"),
@@ -171,7 +171,7 @@ server <- function(input, output, session){
             clearShapes() %>%
             clearMarkers() %>%
             clearMarkerClusters() %>%
-            setView(unlist(input$map_center)[1], unlist(input$map_center)[2],  zoom = input$map_zoom) %>%
+            # setView(unlist(input$map_center)[1], unlist(input$map_center)[2],  zoom = input$map_zoom) %>%
             addCircles(locFilteredByUser()$longitude, locFilteredByUser()$latitude, weight = 3, radius=20,
                        color=pal(locFilteredByUser()$stars_float), stroke = TRUE, fillOpacity = 0.8
                        ,label = restaurantLabel()
@@ -185,7 +185,7 @@ server <- function(input, output, session){
             clearShapes() %>%
             clearMarkers() %>%
             clearMarkerClusters() %>%
-            setView(unlist(input$map_center)[1], unlist(input$map_center)[2],  zoom = input$map_zoom) %>%
+            # setView(unlist(input$map_center)[1], unlist(input$map_center)[2],  zoom = input$map_zoom) %>%
             addCircles(locFiltered()$longitude, locFiltered()$latitude, weight = 3, radius=20,
                        color=pal(locFiltered()$stars), stroke = TRUE, fillOpacity = 0.8
                        ,label = circleLabel()) %>%
