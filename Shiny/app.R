@@ -168,7 +168,7 @@ server <- function(input, output, session){
             setView(centerTorAsian[1], centerTorAsian[2],  zoom = 10) %>% 
             addCircles(location$longitude, location$latitude, weight = 3, radius=20, 
                        color=pal(location$stars), stroke = TRUE, fillOpacity = 0.8
-                       ,label = circleLabel()) %>% 
+                       ,label = location$mapLabel) %>% 
             addMarkers(location$longitude, location$latitude, clusterOptions = markerClusterOptions(),
                        clusterId = "cluster1") %>%
             addLegend("topright", pal = pal, values = location$stars, bins = 7,
