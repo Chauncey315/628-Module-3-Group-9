@@ -1,0 +1,12 @@
+name: Yelp-Business-Analysis
+title: Yelp-Business-Analysis
+username:
+account: yezoli
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1497261
+bundleId: 2602132
+url: https://yezoli.shinyapps.io/Yelp-Business-Analysis/
+when: 1574208333.89582
+asMultiple: FALSE
+asStatic: FALSE

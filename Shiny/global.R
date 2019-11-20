@@ -1,9 +1,14 @@
 rm(list = ls())
 
+if(!require("jpeg")){
+  install.packages("jpeg")
+  require("jpeg")
+}
+
 # set working directory to source file location
 torAsian = read.csv("data/asian_restaurant.csv")
 attribute = read.csv("data/topuser100_attribute.csv")
-
+userCuisineLabel = read.csv("data/label.csv")
 
 
 torAsian$categories = tolower(torAsian[, "categories"])
@@ -17,10 +22,12 @@ pal = colorNumeric(palette = c("black", "red", "blue"), domain = location$stars)
 
 
 
-cuisineSet = c("Chinese", "Korean", "Japanese", "Vietnamese", "Thai")
+cuisineSet = c("Chinese", "Japanese","Korean", "Thai", "Vietnamese")
 attributeSet = c("Romantic", "Good for Group")
 zoomCurrent = 10
 centerCurrent = centerTorAsian
+
+# chineseIcon = readJPEG("pic/chinese.jpg")
 # str(attribute$attributes_Ambience[1])
 
 
@@ -30,6 +37,51 @@ districtSet = unique(torAsian$city)
 starPrecision = 2
 
 torAsian$cuisine = torAsian$new_category
+
+
+
+findRestaurantByUser = function(userID){
+  return(attribute[attribute$userid == userID, ])
+}
+# findRestaurantByUser("eEgeuz6Gg12HZkFZTfbb8A")
+
+findUserByRestaurant = function(business_ID){
+  return(attribute[attribute$business_id == business_ID, ])
+}
+# findUserByRestaurant("zA6gnF5aPBGoOm6uIbKt-A")
+
+
+
+
+
+
+checkUserInCuisineCurrentSet = function(cuisineCurrentSet, userID){
+  user = userCuisineLabel[userCuisineLabel$user_id == userID, ]
+  userLabelSet = c()
+  
+  offset = 3
+  counter = 1
+  
+  for(i in seq(1, 5)){
+    if(user[, i+offset] == 1){
+      # assume cuisineSet is of the same order as userCuisineLabel
+      userLabelSet[counter] = tolower( cuisineSet[i] )
+      counter = counter + 1
+    }
+  }
+  
+  checker = length(intersect(tolower(cuisineCurrentSet), tolower(userLabelSet))) != 0
+  
+  return(checker)
+}
+
+filterUser = function(cuisineCurrentSet){
+  userSelector = sapply(userCuisineLabel$user_id, checkUserInCuisineCurrentSet, 
+                        cuisineCurrentSet = cuisineCurrentSet)
+  
+  return(userCuisineLabel[userSelector, ])
+  # return(userSelector)
+}
 
 filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSet, searchKeywords){
   cuisineSelector = match(torAsian$cuisine, cuisineCurrentSet)
@@ -59,35 +111,137 @@ mapLabel = lapply(seq(nrow(location)), function(i){
 mapLabel = lapply(mapLabel, htmltools::HTML)
 location$mapLabel = mapLabel
 
-dropdownButton = function(label = "", status = c("default", "primary", "success", "info", "warning", "danger"), ..., width = NULL) {
-  
-  status = match.arg(status)
-  # dropdown button content
-  html_ul = list(
-    class = "dropdown-menu",
-    style = if (!is.null(width)) 
-      paste0("width: ", validateCssUnit(width), ";"),
-    lapply(X = list(...), FUN = tags$li, style = "margin-left: 10px; margin-right: 10px;")
-  )
-  # dropdown button apparence
-  html_button = list(
-    class = paste0("btn btn-", status," dropdown-toggle"),
-    type = "button", 
-    `data-toggle` = "dropdown"
-  )
-  html_button = c(html_button, list(label))
-  html_button = c(html_button, list(tags$span(class = "caret")))
-  # final result
-  tags$div(
-    class = "dropdown",
-    do.call(tags$button, html_button),
-    do.call(tags$ul, html_ul),
-    tags$script(
-      "$('.dropdown-menu').click(function(e) {
-      e.stopPropagation();
-});")
-  )
+getAttributeMeaning = function(attributeValue){
+  if(is.na(attributeValue)){
+    return("Missing Value")
+  }else if(attributeValue == 0){
+    return("No")
+  }else if(attributeValue == 1){
+    return("Yes")
+  }else if(attributeValue == 2){
+    return("Not Defined in Dataset")
+  }else{
+    return("Unknown Error")
+  }
 }
+
+getPriceRangeMeaning = function(attributeValue){
+  if(is.na(attributeValue)){
+    return("Missing Value")
+  }else if(attributeValue == 1){
+    return("$")
+  }else if(attributeValue == 2){
+    return("$$")
+  }else if(attributeValue == 3){
+    return("$$$")
+  }else{
+    return("Unknown Error")
+  }
+}
+
+
+  
+attributeColumnRange = seq(3, 13)
+attributeOffset = attributeColumnRange[1] - 1
+restaurantAttribute = attribute[c(), attributeColumnRange]
+
+torAsianColumnRange = seq(3, 7)
+torAsianOffset = tail(attributeColumnRange, n = 1) - 
+  attributeOffset + 1 - torAsianColumnRange[1]
+
+restaurantAttribute$name = torAsian[c(), "name"]
+restaurantAttribute$city = torAsian[c(), "city"]
+restaurantAttribute$latitude = torAsian[c(), "latitude"]
+restaurantAttribute$longitude = torAsian[c(), "longitude"]
+restaurantAttribute$stars_float = torAsian[c(), "stars"]
+# restaurantAttribute$label = location[c(), "mapLabel"]
+
+restaurantUnique = unique(attribute$business_id)
+for(i in seq(1, length(restaurantUnique))){
+  restaurantAttribute[i, attributeColumnRange - attributeOffset] = 
+    attribute[attribute$business_id == restaurantUnique[i], attributeColumnRange][1,]
+  
+  restaurantAttribute[i, torAsianColumnRange + torAsianOffset] = 
+    torAsian[as.character(torAsian$business_id) == as.character(restaurantUnique[i]), torAsianColumnRange][1,]
+}
+# str(restaurantAttribute)
+
+restaurantLabel = lapply(seq(nrow(restaurantAttribute)), function(i){
+  paste0(restaurantAttribute$name[i], "<br/>",
+         "Star: ", restaurantAttribute$stars_float[i], "<br/>",
+         "Alcohal: ", getAttributeMeaning(restaurantAttribute$Alcohol[i]), "<br/>",
+         "Good For Kids: ", getAttributeMeaning(restaurantAttribute$GoodForKids[i]), "<br/>",
+         "TV: ", getAttributeMeaning(restaurantAttribute$HasTV[i]), "<br/>",
+         "Outdoor Seating: ", getAttributeMeaning(restaurantAttribute$OutdoorSeating[i]), "<br/>",
+         "Delivery: ", getAttributeMeaning(restaurantAttribute$RestaurantsDelivery[i]), "<br/>",
+         "Price Range: ", getPriceRangeMeaning(restaurantAttribute$attributes_RestaurantsPriceRange2[i]), "<br/>",
+         "Take Out: ", getAttributeMeaning(restaurantAttribute$RestaurantsTakeOut[i]),
+         sep = ""
+  )
+})
+restaurantLabel = lapply(restaurantLabel, htmltools::HTML)
+restaurantAttribute$restaurantLabel = restaurantLabel
+
+
+
+filterLocationByUser = function(cuisineCurrentSet){
+  currentUser = filterUser(cuisineCurrentSet)
+  restaurantFlitered = c()
+  for(i in seq(1, nrow(currentUser))){
+    restTemp = as.vector(findRestaurantByUser(currentUser$user_id[i])$business_id)
+    restaurantFlitered = c(restaurantFlitered, restTemp)
+  }
+  restaurantFlitered = unique(restaurantFlitered)
+  
+  restautantSelector = match(restaurantAttribute$business_id, restaurantFlitered)
+  restautantSelector = !is.na(restautantSelector)
+  
+  
+  
+  return(restaurantAttribute[restautantSelector, ])
+}
+
+# str(filterLocationByUser(cuisineSet))
+# length(unique(attribute$business_id))
+
+# attributeLabel = lapply(seq(nrow(attribute)), function(i){
+#   paste0(attribute$name[i], "<br/>",
+#          "Star: ", attribute$stars[i], "<br/>",
+#          "Review Amout: ", attribute$review_count[i],
+#          sep = "")
+# })
+# mapLabel = lapply(mapLabel, htmltools::HTML)
+# location$mapLabel = mapLabel
+
+# dropdownButton = function(label = "", status = c("default", "primary", "success", "info", "warning", "danger"), ..., width = NULL) {
+#   
+#   status = match.arg(status)
+#   # dropdown button content
+#   html_ul = list(
+#     class = "dropdown-menu",
+#     style = if (!is.null(width)) 
+#       paste0("width: ", validateCssUnit(width), ";"),
+#     lapply(X = list(...), FUN = tags$li, style = "margin-left: 10px; margin-right: 10px;")
+#   )
+#   # dropdown button apparence
+#   html_button = list(
+#     class = paste0("btn btn-", status," dropdown-toggle"),
+#     type = "button", 
+#     `data-toggle` = "dropdown"
+#   )
+#   html_button = c(html_button, list(label))
+#   html_button = c(html_button, list(tags$span(class = "caret")))
+#   # final result
+#   tags$div(
+#     class = "dropdown",
+#     do.call(tags$button, html_button),
+#     do.call(tags$ul, html_ul),
+#     tags$script(
+#       "$('.dropdown-menu').click(function(e) {
+#       e.stopPropagation();
+# });")
+#   )
+# }
 
 # left closed, right open, [,)
 # colorSet = c("black", "purple", "blue", "orange", "red")
