@@ -1,4 +1,79 @@
-# Function of Files in Repo
+## Dataset
+
+The following list shows the original or cleaned datasets we used in this analysis. some small files have been uploaded to this repository, while some large files are not. 
+
+|              Dataset              |                           Comment                            |
+| :-------------------------------: | :----------------------------------------------------------: |
+|       `tor_restaurant.csv`        |              restaurant in Toronto distriction               |
+|       `restaurant_dic.json`       |     dictionary of restaurant name mapping to categories      |
+|      `review_tor_restaurant`      |               review on restaurant in Toronto                |
+|        `review_users.json`        |         users who reviewed on restaurant in Toronto          |
+|     `tips_tor_restaurant.csv`     |              tips data of restaurant in Toronto              |
+|         `tips_users.json`         |         users who gave tips on restaurant in Toronto         |
+|     `user_tor_restaurant.csv`     | data of users who reviewed and gave tips on restaurant in Toronto |
+| `user_tor_restaurant_noelite.csv` |          user_to_restaurant without column 'elite'           |
+|         `elite_dic.json`          | users who reviewed and gave tips on restaurant in Toronto mapping to elite year |
+|         `users_list.json`         | users who reviewed and gave tips on restaurant in Toronto(No Duplicates) |
+
+
+
+## Function of Files in Repository
+
+#### Misc
+
+contains miscellaneous archived *deserted* files, like, 
+
+* `codeArchive.R` contains deserted codes
+* `Code.ipynb` tries to load data onto google drive and 
+
+####  Code
+
+contains the codes to clean, analyze the dataset
+
+* `100user_analysis.ipynb` finds out top 100 most influential users
+* `628_EDA_code.py` performs exploratory analysis on the dataset
+* `polarity_score` calculates restaurants' popularity score
+* `prediction.py` develops a model to predict user's star for restaurants based on the review
+
+#### image
+
+Contains images used in report, slides and jupyter notebook
+
+#### Shiny
+
+Contains the whole shiny project
+
+* `analysis`
+
+  Contains html of 5 cusines' analysis
+
+* `app.R`
+
+  Define shiny's UI and Server behavior
+
+* `global.R` 
+
+  Define datasets, variables and functions that `app.R` needs. 
+
+* `data`
+
+  contains csvs that `global.R` needs and original `docx` version of cuisine analysis
+
+* `pic` 
+
+  Contains images for button
+
+* `www`
+
+  Contains `css` files and various images. 
+
+#### Summary 
+
+The final summary of our project
+
+
+
+
 
 
 
