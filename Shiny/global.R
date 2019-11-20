@@ -1,36 +1,42 @@
 rm(list = ls())
 
-if(!require("jpeg")){
-  install.packages("jpeg")
-  require("jpeg")
+if(!require("png")){
+  install.packages("png")
+  require("png")
 }
 
 # set working directory to source file location
+
+# torAsian contains information about asian restaurants in Toronto
 torAsian = read.csv("data/asian_restaurant.csv")
+
+# attribute contains information about popular restaurants' attribute
 attribute = read.csv("data/topuser100_attribute.csv")
+
+# userCuisineLabel contains information about influential users' favorite
 userCuisineLabel = read.csv("data/label.csv")
 
 
 torAsian$categories = tolower(torAsian[, "categories"])
-# location = torAsian[, c("longitude", "latitude")]
+
+# location is a subset of torAsian for future data manipulation
 location = torAsian[, c("longitude", "latitude", "stars", "name", "business_id", "review_count")]
+
+# get the center of all asian restaurants in Toronto
+# as the leaflet map's initial view center
 centerTorAsian = apply(location[c("longitude", "latitude")], 2, mean)
 centerTorAsian = as.vector(centerTorAsian)
 
+# build a function between color and restaurants' star
+# so that restaurants' star can be represented by color in leaflet map
 pal = colorNumeric(palette = c("black", "red", "blue"), domain = location$stars)
 
 
 
-
+# the cuisine set we will consider
 cuisineSet = c("Chinese", "Japanese","Korean", "Thai", "Vietnamese")
-attributeSet = c("Romantic", "Good for Group")
-zoomCurrent = 10
-centerCurrent = centerTorAsian
 
-# chineseIcon = readJPEG("pic/chinese.jpg")
-# str(attribute$attributes_Ambience[1])
-
-
+# get the names of Great Totonto's 7 district
 districtSet = unique(torAsian$city)
 
 
@@ -54,7 +60,7 @@ findUserByRestaurant = function(business_ID){
 
 
 
-
+# check whether a particular user is in the currently selected cuisine set
 checkUserInCuisineCurrentSet = function(cuisineCurrentSet, userID){
   user = userCuisineLabel[userCuisineLabel$user_id == userID, ]
   userLabelSet = c()
@@ -75,6 +81,7 @@ checkUserInCuisineCurrentSet = function(cuisineCurrentSet, userID){
   return(checker)
 }
 
+# find out the details about users who are in the currently selected cuisine set
 filterUser = function(cuisineCurrentSet){
   userSelector = sapply(userCuisineLabel$user_id, checkUserInCuisineCurrentSet, 
                         cuisineCurrentSet = cuisineCurrentSet)
@@ -83,6 +90,7 @@ filterUser = function(cuisineCurrentSet){
   # return(userSelector)
 }
 
+# filter restaurant by interative map selector
 filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSet, searchKeywords){
   cuisineSelector = match(torAsian$cuisine, cuisineCurrentSet)
   cuisineSelector = !is.na(cuisineSelector)
@@ -100,8 +108,9 @@ filterLocation = function(cuisineCurrentSet, starCurrentRange, districtCurrentSe
   return(location[aggregateSelector,])
 }
 
-match(torAsian$cuisine, cuisineSet)
+# we defined popular restaurants as influential users' favorite restaurants
 
+# produce a suitable html string for popular restaurant's pop-up label 
 mapLabel = lapply(seq(nrow(location)), function(i){
   paste0(location$name[i], "<br/>",
          "Star: ", location$stars[i], "<br/>",
@@ -111,6 +120,7 @@ mapLabel = lapply(seq(nrow(location)), function(i){
 mapLabel = lapply(mapLabel, htmltools::HTML)
 location$mapLabel = mapLabel
 
+# translate numeric attribute value to string value
 getAttributeMeaning = function(attributeValue){
   if(is.na(attributeValue)){
     return("Missing Value")
@@ -125,6 +135,7 @@ getAttributeMeaning = function(attributeValue){
   }
 }
 
+# translate price range's numeric attribute value to string value
 getPriceRangeMeaning = function(attributeValue){
   if(is.na(attributeValue)){
     return("Missing Value")
@@ -140,7 +151,7 @@ getPriceRangeMeaning = function(attributeValue){
 }
 
 
-  
+# create a dataframe of details about popular restaurant
 attributeColumnRange = seq(3, 13)
 attributeOffset = attributeColumnRange[1] - 1
 restaurantAttribute = attribute[c(), attributeColumnRange]
@@ -166,16 +177,19 @@ for(i in seq(1, length(restaurantUnique))){
 }
 # str(restaurantAttribute)
 
+# produce a suitable html string for popular restaurant's pop-up label 
 restaurantLabel = lapply(seq(nrow(restaurantAttribute)), function(i){
   userIDByRestaurant = as.vector(findUserByRestaurant(restaurantAttribute$business_id[i])$userid)
   userNameByRestaurant = !is.na( match(as.vector(userCuisineLabel$user_id), userIDByRestaurant) )
   userNameByRestaurant = as.vector( userCuisineLabel$user_name[userNameByRestaurant] )
   
+  # produce a html string for restaurants' frequent visitor or patronizer
   userHTML = c()
   for( i in seq(1, length(userNameByRestaurant)) ){
     userHTML = paste0(userHTML, "<br/>", userNameByRestaurant[i], sep = "")
   }
   
+  # produce a html string for restaurants' detail
   paste0(restaurantAttribute$name[i], "<br/>",
          "Star: ", restaurantAttribute$stars_float[i], "<br/>",
          "Alcohal: ", getAttributeMeaning(restaurantAttribute$Alcohol[i]), "<br/>",
@@ -194,7 +208,7 @@ restaurantLabel = lapply(restaurantLabel, htmltools::HTML)
 restaurantAttribute$restaurantLabel = restaurantLabel
 
 
-
+# produce a dataframe of the currently selected popular restaurants'
 filterLocationByUser = function(cuisineCurrentSet){
   currentUser = filterUser(cuisineCurrentSet)
   restaurantFlitered = c()
@@ -207,91 +221,9 @@ filterLocationByUser = function(cuisineCurrentSet){
   restautantSelector = match(restaurantAttribute$business_id, restaurantFlitered)
   restautantSelector = !is.na(restautantSelector)
   
-  
-  
   return(restaurantAttribute[restautantSelector, ])
 }
 
-# str(filterLocationByUser(cuisineSet))
-# length(unique(attribute$business_id))
 
-# attributeLabel = lapply(seq(nrow(attribute)), function(i){
-#   paste0(attribute$name[i], "<br/>",
-#          "Star: ", attribute$stars[i], "<br/>",
-#          "Review Amout: ", attribute$review_count[i],
-#          sep = "")
-# })
-# mapLabel = lapply(mapLabel, htmltools::HTML)
-# location$mapLabel = mapLabel
 
-# dropdownButton = function(label = "", status = c("default", "primary", "success", "info", "warning", "danger"), ..., width = NULL) {
-#   
-#   status = match.arg(status)
-#   # dropdown button content
-#   html_ul = list(
-#     class = "dropdown-menu",
-#     style = if (!is.null(width)) 
-#       paste0("width: ", validateCssUnit(width), ";"),
-#     lapply(X = list(...), FUN = tags$li, style = "margin-left: 10px; margin-right: 10px;")
-#   )
-#   # dropdown button apparence
-#   html_button = list(
-#     class = paste0("btn btn-", status," dropdown-toggle"),
-#     type = "button", 
-#     `data-toggle` = "dropdown"
-#   )
-#   html_button = c(html_button, list(label))
-#   html_button = c(html_button, list(tags$span(class = "caret")))
-#   # final result
-#   tags$div(
-#     class = "dropdown",
-#     do.call(tags$button, html_button),
-#     do.call(tags$ul, html_ul),
-#     tags$script(
-#       "$('.dropdown-menu').click(function(e) {
-#       e.stopPropagation();
-# });")
-#   )
-# }
 
-# left closed, right open, [,)
-# colorSet = c("black", "purple", "blue", "orange", "red")
-# starSep = c(1., 2., 3., 4.)
-# colorByColor = c()
-# for(i in seq(1, nrow(torAsian))){
-#   rank = ceiling(tail( rank(c(starSep, torAsian[i, "stars"])), n=1) )
-#   colorByColor[i] = colorSet[rank]
-# }
-# location$color = colorByColor
-# 
-# starRange = c()
-# 
-# for(i in seq(1, length(starSep)+1)){
-#   if(i == 1){
-#     starRange[i] = paste("[", "0", ",", starSep[1], ")", sep = "")
-#   }else if(i == length(starSep)+1){
-#     starRange[i] = paste("[", starSep[i-1], ",", "5", "]", sep = "")
-#   }else{
-#     starRange[i] = paste("[", starSep[i-1], ",", starSep[i], ")", sep = "")
-#   }
-# }
-
-# cuisine = c()
-# for(i in seq(1, nrow(torAsian))){
-#   ctgTemp = torAsian[i, c("name", "categories")]
-#   ctgTemp = gsub(" ", "", ctgTemp, fixed = TRUE)
-#   ctgTemp = unlist(strsplit(ctgTemp, ","))
-#   
-#   slctTemp = !is.na(match(tolower(cuisineSet), ctgTemp))
-#   
-#   if(sum(slctTemp) == 0){
-#     cuisine[i] = "UndefinedCategory"
-#   }else if(sum(slctTemp) == 1){
-#     cuisine[i] = cuisineSet[ match(TRUE, slctTemp) ]
-#   }else if(sum(slctTemp) >= 2 & sum(slctTemp) <=5){
-#     cuisine[i] = 'MultipleCategory'
-#   }else{
-#     cuisine[i] = 'UnkownError'
-#   }
-# }
-# torAsian$cuisine = cuisine
