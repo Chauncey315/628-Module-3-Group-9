@@ -147,3 +147,18 @@ The final slide of our project.
     * Find [central point](https://programminghistorian.org/en/lessons/exploring-and-analyzing-network-data-with-python#basics-of-networkx-creating-the-graph) of the network, regard them as advertisement recipients
     * [Clustering graph](https://www.csc2.ncsu.edu/faculty/nfsamato/practical-graph-mining-with-R/slides/pdf/Graph_Cluster_Analysis.pdf), sample important points from each cluster
     * Construct matrix of users, calculate `Graph Clustering Rate` `Transtivity` 
+
+
+
+
+
+
+
+## Contributor
+
+| Name         | Email             |
+| ------------ | ----------------- |
+| Chushi, shi  | cshi6@wisc.edu    |
+| Fangfei, Lin | Flin29@wisc.edu   |
+| Lu, Chen     | lchen487@wisc.edu |
+| Yezhou, Li   | yli967@wisc.edu   |
