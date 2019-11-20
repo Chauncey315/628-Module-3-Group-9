@@ -34,6 +34,9 @@ contains the codes to clean, analyze the dataset
 * `628_EDA_code.py` performs exploratory analysis on the dataset
 * `polarity_score` calculates restaurants' popularity score
 * `prediction.py` develops a model to predict user's star for restaurants based on the review
+* `final_report_yelp.ipynb` is the final interactive report of the project
+* `clean_data` contains codes to clean the dataset
+* `network` contains the codes of social network analysis
 
 #### image
 
@@ -69,7 +72,11 @@ Contains the whole shiny project
 
 #### Summary 
 
-The final summary of our project
+The final summary of our project. 
+
+#### Slide
+
+The final slide of our project. 
 
 
 
