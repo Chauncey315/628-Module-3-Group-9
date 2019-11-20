@@ -156,9 +156,9 @@ The final slide of our project.
 
 ## Contributor
 
-| Name         | Email             |
-| ------------ | ----------------- |
-| Chushi, shi  | cshi6@wisc.edu    |
-| Fangfei, Lin | Flin29@wisc.edu   |
-| Lu, Chen     | lchen487@wisc.edu |
-| Yezhou, Li   | yli967@wisc.edu   |
+|     Name     |       Email       |
+| :----------: | :---------------: |
+| Chushi, shi  |  cshi6@wisc.edu   |
+| Fangfei, Lin |  Flin29@wisc.edu  |
+|   Lu, Chen   | lchen487@wisc.edu |
+|  Yezhou, Li  |  yli967@wisc.edu  |
