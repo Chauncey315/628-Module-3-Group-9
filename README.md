@@ -158,7 +158,7 @@ The final slide of our project.
 
 |     Name     |       Email       |
 | :----------: | :---------------: |
-| Chushi, shi  |  cshi46@wisc.edu   |
+| Chushi, Shi  |  cshi46@wisc.edu  |
 | Fangfei, Lin |  Flin29@wisc.edu  |
 |   Lu, Chen   | lchen487@wisc.edu |
 |  Yezhou, Li  |  yli967@wisc.edu  |
